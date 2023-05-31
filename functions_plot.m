@@ -3,24 +3,21 @@ pfuns.potential = @plot_potential;
 end
 
 
-function number = plot_potential(potential,label)
-global x y nx ny h boundary_H t method gfuns
-boundary_judge = zeros(ny,nx);
-boundary_judge = gfuns.Boundary_value(x,y,boundary_judge,boundary_H,1);
+function number = plot_potential(potential,bj_calODH,x,y,zlim,fig_title)
 [X,Y] = meshgrid(x,y);
-potential =  potential.*(1-boundary_judge);
-plotrange=[min(x),max(x),min(y),max(y),0,max(max(potential))];
+potential(bj_calODH==0) = nan;
+plotrange=[min(x),max(x),min(y),max(y),min(min(potential)),zlim];
 
 figure;
-
 subplot(2,1,1);
-potential(potential<=0) = nan;
-set(surf(X,Y,potential),'Facecolor','none'); axis(plotrange);
-title(['Method: ',method ', dx = ',num2str(h),', dy = ',num2str(h),', time: ',num2str(t)])
-xlabel('x(m)'); ylabel('y(m)'); zlabel(label);
+set(surf(X,Y,potential),'Facecolor','none');
+axis(plotrange);
+title(fig_title)
+xlabel('x(m)'); ylabel('y(m)');
 subplot(2,1,2); 
 imagesc(x,y, potential,'alphadata',~isnan(potential)); colorbar;
-% title(['Method: ',method ', dx = ',num2str(h),', dy = ',num2str(h),', time: ',num2str(t)])
+caxis([0 zlim]);
+set(gca,'YDir','normal','color',0*[1 1 1]);
 xlabel('x(m)'); ylabel('y(m)'); 
 
 number = 0;
